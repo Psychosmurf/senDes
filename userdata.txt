@@ -1,4 +1,3 @@
-0 James james james 1
 8 Chris password chris@email.com 1
 8 Chris pass chris2@email.com 1
 20 james pa55w0rd james@email.com 1
