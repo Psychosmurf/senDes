@@ -119,16 +119,26 @@ void registerUser(UserData** userData){
 }
 
 void registerUsersFromFile(FILE* dataFile, UserData** userData) {
+    printf("successfully entered user registration from file\n");
     int userNum;
     char* userName = (char*) malloc(sizeof(char)*MAX_NAME_SIZE);
-    char* userPass = (char*) malloc(sizeof(char)*MAX_PASS_SZIE);
+    char* userPass = (char*) malloc(sizeof(char)*MAX_PASS_SIZE);
     char* userEmail = (char*) malloc(sizeof(char)*MAX_EMAIL_SIZE);
+    bool registered;
 
     while (!feof(dataFile)) {
-        fgets(dataFile, "%i", &userNum);
-        fgets(dataFile, "%s", userName);
-        fgets(dataFile, "%s", userPass);
-        fgets(dataFile, "%s", userEmail);
+        fscanf(dataFile, "%i", &userNum);
+        fscanf(dataFile, "%s", userName);
+        fscanf(dataFile, "%s", userPass);
+        fscanf(dataFile, "%s", userEmail);
+        //go to end of line
+        char c;
+        do {
+            c = fgetc(dataFile);
+        }
+        while (c != '\n' && c != EOF);
+        if (c == EOF) return;
+
         if ((*userData)[userNum].registered) {
 
             //go to first available node
@@ -140,7 +150,7 @@ void registerUsersFromFile(FILE* dataFile, UserData** userData) {
             //allocate space
             trk -> nextUser = (UserData*) malloc(sizeof(UserData));
             trk -> nextUser -> userName = (char*) malloc(sizeof(char)*MAX_NAME_SIZE);
-            trk -> nextUser -> userPass = (char*) malloc(sizeof(char)*MAx_PASS_SIZE);
+            trk -> nextUser -> userPass = (char*) malloc(sizeof(char)*MAX_PASS_SIZE);
             trk -> nextUser -> userEmail = (char*) malloc(sizeof(char)*MAX_EMAIL_SIZE);
 
             //save user data
@@ -157,6 +167,10 @@ void registerUsersFromFile(FILE* dataFile, UserData** userData) {
             strcpy((*userData)[userNum].userEmail, userEmail);
             (*userData)[userNum].registered = true;
         }
+    }
+
+    printf("successfully loaded user data from file\n");
+}
 
 
 int main(){
@@ -173,7 +187,8 @@ int main(){
 
     //load user data from file.
     FILE* dataFile = fopen("userdata.txt", "r");
-    registerUsersFromFile(dataFile);
+    registerUsersFromFile(dataFile, &userData);
+    fclose(dataFile);
 
     
     
@@ -201,13 +216,13 @@ int main(){
     }
 
     //save user data to file
-    FILE* dataFile = fopen("userdata.txt", "w+");
+    FILE* dataFile2 = fopen("userdata2.txt", "w+");
     trk = NULL;
     for (int i = 0; i < MAX_NUM_USERS; i++) {
         trk = &userData[i];
         while (trk != NULL) {
             if (trk -> registered){
-                fprintf(dataFile, "%d %s %s %s %d\n", i, trk -> userName, 
+                fprintf(dataFile2, "%d %s %s %s %d\n", i, trk -> userName, 
                                                          trk -> userPass, 
                                                          trk -> userEmail, 
                                                          trk -> registered);
@@ -217,7 +232,7 @@ int main(){
     }
 
     //close file
-    fclose(dataFile);
+    fclose(dataFile2);
 
     //free allocated memory
     UserData* current = NULL;
