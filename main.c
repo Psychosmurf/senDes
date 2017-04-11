@@ -32,55 +32,21 @@ void registerUser(UserData** userData){
     char* userPass = (char*) malloc(sizeof(char)*MAX_PASS_SIZE);
     char* userEmail = (char*) malloc(sizeof(char)*MAX_EMAIL_SIZE);
 
-    //get user input
-    char c;
-    int i;
-    for (i = 0; i < MAX_NAME_SIZE; i++) {
-        c = getchar();
-        if (c == ';') {
-            for (;i < MAX_NAME_SIZE; i++) {
-                userName[i] = ' ';
-            }
-            break;
-        }
-        userName[i] = c;
-    }
-
-    int j;
-    for (j = 0; j < MAX_PASS_SIZE; j++) {
-        c = getchar();
-        if (c == ';') {
-            for (;j < MAX_PASS_SIZE; j++) {
-                userPass[j] = ' ';
-            }
-            break;
-        }
-        userPass[j] = c;
-    }   
-    
-    int k;
-    for (k = 0; k < MAX_EMAIL_SIZE; k++) {
-        c = getchar();
-        if (c == ';') {
-            for (;k < MAX_EMAIL_SIZE; k++) {
-                userEmail[k] = ' ';
-            }
-            break;
-        }
-        userEmail[k] = c;
-    }
-
-    //check input format
-    if (i >= MAX_NAME_SIZE) {
-        printf("error: name must be less than %d characters.", MAX_NAME_SIZE); 
+    scanf("%s", userName);
+    if (sizeof(userName)/(sizeof(char)) > MAX_NAME_SIZE) {
+        printf("error: name must be less than %d characters.", MAX_NAME_SIZE);
         return;
     }
-    if (j >= MAX_PASS_SIZE) {
-        printf("error: passowrd must be less than %d characters.", MAX_PASS_SIZE); 
+
+    scanf("%s", userPass);
+    if (sizeof(userName)/(sizeof(char)) > MAX_PASS_SIZE) {
+        printf("error: password must be less than %d characters.", MAX_PASS_SIZE);
         return;
     }
-    if (k >= MAX_EMAIL_SIZE) {
-        printf("error: email must be less than %d characters.", MAX_EMAIL_SIZE);
+
+    scanf("%s", userEmail);
+    if (sizeof(userEmail)/(sizeof(char)) > MAX_EMAIL_SIZE) {
+        printf("error: email must be less than %d characgers.", MAX_EMAIL_SIZE);
         return;
     }
 
@@ -119,7 +85,6 @@ void registerUser(UserData** userData){
 }
 
 void registerUsersFromFile(FILE* dataFile, UserData** userData) {
-    printf("successfully entered user registration from file\n");
     int userNum;
     char* userName = (char*) malloc(sizeof(char)*MAX_NAME_SIZE);
     char* userPass = (char*) malloc(sizeof(char)*MAX_PASS_SIZE);
@@ -168,8 +133,6 @@ void registerUsersFromFile(FILE* dataFile, UserData** userData) {
             (*userData)[userNum].registered = true;
         }
     }
-
-    printf("successfully loaded user data from file\n");
 }
 
 
@@ -216,7 +179,7 @@ int main(){
     }
 
     //save user data to file
-    FILE* dataFile2 = fopen("userdata2.txt", "w+");
+    FILE* dataFile2 = fopen("userdata.txt", "w+");
     trk = NULL;
     for (int i = 0; i < MAX_NUM_USERS; i++) {
         trk = &userData[i];
