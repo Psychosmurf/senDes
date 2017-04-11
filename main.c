@@ -118,6 +118,47 @@ void registerUser(UserData** userData){
     }
 }
 
+void registerUsersFromFile(FILE* dataFile, UserData** userData) {
+    int userNum;
+    char* userName = (char*) malloc(sizeof(char)*MAX_NAME_SIZE);
+    char* userPass = (char*) malloc(sizeof(char)*MAX_PASS_SZIE);
+    char* userEmail = (char*) malloc(sizeof(char)*MAX_EMAIL_SIZE);
+
+    while (!feof(dataFile)) {
+        fgets(dataFile, "%i", &userNum);
+        fgets(dataFile, "%s", userName);
+        fgets(dataFile, "%s", userPass);
+        fgets(dataFile, "%s", userEmail);
+        if ((*userData)[userNum].registered) {
+
+            //go to first available node
+            UserData* trk = &(*userData)[userNum];
+            while (trk -> nextUser != NULL) {
+                trk = trk -> nextUser;
+            }
+
+            //allocate space
+            trk -> nextUser = (UserData*) malloc(sizeof(UserData));
+            trk -> nextUser -> userName = (char*) malloc(sizeof(char)*MAX_NAME_SIZE);
+            trk -> nextUser -> userPass = (char*) malloc(sizeof(char)*MAx_PASS_SIZE);
+            trk -> nextUser -> userEmail = (char*) malloc(sizeof(char)*MAX_EMAIL_SIZE);
+
+            //save user data
+            strcpy(trk -> nextUser -> userName, userName);
+            strcpy(trk -> nextUser -> userPass, userPass);
+            strcpy(trk -> nextUser -> userEmail, userEmail);
+            trk -> nextUser -> registered = true;
+            trk -> nextUser -> nextUser = NULL;
+        }
+        else {
+            //save user data
+            strcpy((*userData)[userNum].userName, userName);
+            strcpy((*userData)[userNum].userPass, userPass);
+            strcpy((*userData)[userNum].userEmail, userEmail);
+            (*userData)[userNum].registered = true;
+        }
+
+
 int main(){
     //Initialize user data array
     UserData* userData = (UserData*) malloc(sizeof(UserData)*MAX_NUM_USERS);
@@ -131,7 +172,10 @@ int main(){
     }
 
     //load user data from file.
-    //FILE* dataFile = fopen("userdata.txt", "r");
+    FILE* dataFile = fopen("userdata.txt", "r");
+    registerUsersFromFile(dataFile);
+
+    
     
 
     //get control input
@@ -163,10 +207,10 @@ int main(){
         trk = &userData[i];
         while (trk != NULL) {
             if (trk -> registered){
-                fprintf(dataFile, "%d; %s; %s; %s; %d\n", i, trk -> userName, 
-                                                             trk -> userPass, 
-                                                             trk -> userEmail, 
-                                                             trk -> registered);
+                fprintf(dataFile, "%d %s %s %s %d\n", i, trk -> userName, 
+                                                         trk -> userPass, 
+                                                         trk -> userEmail, 
+                                                         trk -> registered);
             }
             trk = trk -> nextUser;
         }
