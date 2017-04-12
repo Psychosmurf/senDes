@@ -16,6 +16,7 @@ typedef struct User_Data
     char* userEmail;
     bool  registered;
     struct User_Data* nextUser;
+    bool loggedIn;
 } UserData;
 
 int hash(char* userName, char* userEmail){
@@ -74,6 +75,7 @@ void registerUser(UserData** userData){
         strcpy(trk -> nextUser -> userEmail, userEmail);
         trk -> nextUser -> registered = true;
         trk -> nextUser -> nextUser = NULL;
+        trk -> nextUser -> loggedIn = false;
     }
     else {
         //save user data
@@ -81,6 +83,7 @@ void registerUser(UserData** userData){
         strcpy((*userData)[hashNum].userPass, userPass);
         strcpy((*userData)[hashNum].userEmail, userEmail);
         (*userData)[hashNum].registered = true;
+        (*userData)[hashNum].loggedIn = false;
     }
 }
 
@@ -124,6 +127,7 @@ void registerUsersFromFile(FILE* dataFile, UserData** userData) {
             strcpy(trk -> nextUser -> userEmail, userEmail);
             trk -> nextUser -> registered = true;
             trk -> nextUser -> nextUser = NULL;
+            trk -> nextUser -> loggedIn = false;
         }
         else {
             //save user data
@@ -131,8 +135,120 @@ void registerUsersFromFile(FILE* dataFile, UserData** userData) {
             strcpy((*userData)[userNum].userPass, userPass);
             strcpy((*userData)[userNum].userEmail, userEmail);
             (*userData)[userNum].registered = true;
+            (*userData)[userNum].loggedIn = false;
         }
     }
+}
+
+void loginUser(UserData** userData){
+    char* userName = (char*) malloc(sizeof(char)*MAX_NAME_SIZE);
+    char* userPass = (char*) malloc(sizeof(char)*MAX_PASS_SIZE);
+    char* userEmail = (char*) malloc(sizeof(char)*MAX_EMAIL_SIZE);
+    bool registered;
+    bool loggedIn;
+   
+    
+    scanf("%s", userName);
+    if (sizeof(userName)/(sizeof(char)) > MAX_NAME_SIZE) {
+        printf("error: name must be less than %d characters.", MAX_NAME_SIZE);
+        return;
+    }
+
+    scanf("%s", userPass);
+    if (sizeof(userName)/(sizeof(char)) > MAX_PASS_SIZE) {
+        printf("error: password must be less than %d characters.", MAX_PASS_SIZE);
+        return;
+    }
+
+    scanf("%s", userEmail);
+    if (sizeof(userEmail)/(sizeof(char)) > MAX_EMAIL_SIZE) {
+        printf("error: email must be less than %d characgers.", MAX_EMAIL_SIZE);
+        return;
+    }
+
+    //calculate hash number
+    int hashNum = hash(userName, userEmail);
+
+    //find user in userdata
+    UserData* usrPtr = NULL;
+    do {
+        usrPtr = &(*userData)[hashNum];
+        if (strcmp(usrPtr -> userName, userName) == 0) {
+            if (strcmp(usrPtr -> userEmail, userEmail) == 0) {
+                if (strcmp(usrPtr -> userPass, userPass) == 0) {
+                    usrPtr -> loggedIn = true;
+                    return;
+                }
+                else printf("error: wrong password.\n");
+            }
+            printf("error: wrong email.\n");
+        }
+        else {
+            if (usrPtr -> nextUser != NULL) {
+                usrPtr = usrPtr -> nextUser;
+            }
+            else {
+                printf("error: user name not found\n");
+                return;
+            }
+        }
+    }
+    while (1);
+}
+
+void logoutUser(UserData** userData){
+    char* userName = (char*) malloc(sizeof(char)*MAX_NAME_SIZE);
+    char* userPass = (char*) malloc(sizeof(char)*MAX_PASS_SIZE);
+    char* userEmail = (char*) malloc(sizeof(char)*MAX_EMAIL_SIZE);
+    bool registered;
+    bool loggedIn;
+   
+    
+    scanf("%s", userName);
+    if (sizeof(userName)/(sizeof(char)) > MAX_NAME_SIZE) {
+        printf("error: name must be less than %d characters.", MAX_NAME_SIZE);
+        return;
+    }
+
+    scanf("%s", userPass);
+    if (sizeof(userName)/(sizeof(char)) > MAX_PASS_SIZE) {
+        printf("error: password must be less than %d characters.", MAX_PASS_SIZE);
+        return;
+    }
+
+    scanf("%s", userEmail);
+    if (sizeof(userEmail)/(sizeof(char)) > MAX_EMAIL_SIZE) {
+        printf("error: email must be less than %d characgers.", MAX_EMAIL_SIZE);
+        return;
+    }
+
+    //calculate hash number
+    int hashNum = hash(userName, userEmail);
+
+    //find user in userdata
+    UserData* usrPtr = NULL;
+    do {
+        usrPtr = &(*userData)[hashNum];
+        if (strcmp(usrPtr -> userName, userName) == 0) {
+            if (strcmp(usrPtr -> userEmail, userEmail) == 0) {
+                usrPtr -> loggedIn = false;
+                return;
+            }
+            else {
+                printf("error: wrong email.\n");
+            }
+        }
+        else {
+            if (usrPtr -> nextUser != NULL) {
+                usrPtr = usrPtr -> nextUser;
+            }
+            else {
+                printf("error: user not found.\n");
+                return;
+            }
+        }
+    }
+    while (1);
 }
 
 
@@ -153,15 +269,14 @@ int main(){
     registerUsersFromFile(dataFile, &userData);
     fclose(dataFile);
 
-    
-    
-
     //get control input
     char inChar;
     while (1) {
         inChar = getchar();
         if (inChar == '\n') break;
         if (inChar == 'r') registerUser(&userData);
+        if (inChar == 'l') loginUser(&userData);
+        if (inChar == 'o') logoutUser(&userData);
     }
 
     //test output
@@ -211,6 +326,4 @@ int main(){
         }
     }
     free(userData);
-    
-    return 0;
 }
