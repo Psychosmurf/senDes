@@ -1,4 +1,2 @@
-8 Chris password chris@email.com 1
-8 Chris pass chris2@email.com 1
-20 james pa55w0rd james@email.com 1
-56 Paul pa55w0rd paul@email.com 1
+0 dummy dummy dummy 1 0
+12 chris password chris@email.com 1 0

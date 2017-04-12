@@ -21,7 +21,9 @@ typedef struct User_Data
 
 int hash(char* userName, char* userEmail){
     int prod = 1;
-    for (int i = 0; i < 50; i++){
+    printf("hash is using userName: %s\n", userName);
+    int sizeOfName = sizeof(userName)/sizeof(char);
+    for (int i = 0; i < sizeOfName; i++){
         prod = prod*(userName[i]+1);
     }
     return prod % MAX_NUM_USERS;
@@ -144,23 +146,30 @@ void loginUser(UserData** userData){
     char* userName = (char*) malloc(sizeof(char)*MAX_NAME_SIZE);
     char* userPass = (char*) malloc(sizeof(char)*MAX_PASS_SIZE);
     char* userEmail = (char*) malloc(sizeof(char)*MAX_EMAIL_SIZE);
-    bool registered;
-    bool loggedIn;
    
-    
+    //skip leading whitespace
+    /*
+    char inChar = ' ';
+    while (inChar == ' ') {
+        inChar = getchar();
+    }*/
+
     scanf("%s", userName);
+    printf("read username: %s\n", userName);
     if (sizeof(userName)/(sizeof(char)) > MAX_NAME_SIZE) {
         printf("error: name must be less than %d characters.", MAX_NAME_SIZE);
         return;
     }
 
     scanf("%s", userPass);
+    printf("read userpass: %s\n", userPass);
     if (sizeof(userName)/(sizeof(char)) > MAX_PASS_SIZE) {
         printf("error: password must be less than %d characters.", MAX_PASS_SIZE);
         return;
     }
 
     scanf("%s", userEmail);
+    printf("read userEmail: %s\n", userEmail);
     if (sizeof(userEmail)/(sizeof(char)) > MAX_EMAIL_SIZE) {
         printf("error: email must be less than %d characgers.", MAX_EMAIL_SIZE);
         return;
@@ -168,11 +177,15 @@ void loginUser(UserData** userData){
 
     //calculate hash number
     int hashNum = hash(userName, userEmail);
+    printf("checking hash value: %d\n", hashNum);
 
     //find user in userdata
     UserData* usrPtr = NULL;
     do {
         usrPtr = &(*userData)[hashNum];
+        printf("testing user pointer: \nuserName: %s\nuserPass: %s\nuserEmail: %s\n", usrPtr -> userName,
+                                                                                      usrPtr -> userPass,
+                                                                                      usrPtr -> userEmail);
         if (strcmp(usrPtr -> userName, userName) == 0) {
             if (strcmp(usrPtr -> userEmail, userEmail) == 0) {
                 if (strcmp(usrPtr -> userPass, userPass) == 0) {
@@ -182,6 +195,7 @@ void loginUser(UserData** userData){
                 else printf("error: wrong password.\n");
             }
             printf("error: wrong email.\n");
+            return;
         }
         else {
             if (usrPtr -> nextUser != NULL) {
@@ -210,12 +224,6 @@ void logoutUser(UserData** userData){
         return;
     }
 
-    scanf("%s", userPass);
-    if (sizeof(userName)/(sizeof(char)) > MAX_PASS_SIZE) {
-        printf("error: password must be less than %d characters.", MAX_PASS_SIZE);
-        return;
-    }
-
     scanf("%s", userEmail);
     if (sizeof(userEmail)/(sizeof(char)) > MAX_EMAIL_SIZE) {
         printf("error: email must be less than %d characgers.", MAX_EMAIL_SIZE);
@@ -236,6 +244,7 @@ void logoutUser(UserData** userData){
             }
             else {
                 printf("error: wrong email.\n");
+                return;
             }
         }
         else {
@@ -262,11 +271,14 @@ int main(){
         userData[i].userEmail = (char*) malloc(sizeof(char)*MAX_EMAIL_SIZE);
         userData[i].registered = false;
         userData[i].nextUser = NULL;
+        userData[i].loggedIn = false;
     }
 
     //load user data from file.
     FILE* dataFile = fopen("userdata.txt", "r");
-    registerUsersFromFile(dataFile, &userData);
+    if (dataFile != NULL) {
+        registerUsersFromFile(dataFile, &userData);
+    }
     fclose(dataFile);
 
     //get control input
@@ -285,9 +297,11 @@ int main(){
     while (i < MAX_NUM_USERS) {
         trk = &userData[i];
         while (trk != NULL) {
-            printf("user# %d name is: %s\nuser# %d pass is: %s\nuser# %d email is: %s\n", i, trk -> userName, 
-                                                                                          i, trk -> userPass,
-                                                                                          i, trk -> userEmail);
+            printf("user# %d name is: %s\nuser# %d pass is: %s\nuser# %d email is: %s\n, logged in: %d\n", 
+                    i, trk -> userName, 
+                    i, trk -> userPass,
+                    i, trk -> userEmail,
+                       trk -> loggedIn);
             trk = trk -> nextUser;
         }
         i++;
@@ -300,10 +314,11 @@ int main(){
         trk = &userData[i];
         while (trk != NULL) {
             if (trk -> registered){
-                fprintf(dataFile2, "%d %s %s %s %d\n", i, trk -> userName, 
+                fprintf(dataFile2, "%d %s %s %s %d %d\n", i, trk -> userName, 
                                                          trk -> userPass, 
                                                          trk -> userEmail, 
-                                                         trk -> registered);
+                                                         trk -> registered,
+                                                         trk -> loggedIn);
             }
             trk = trk -> nextUser;
         }
