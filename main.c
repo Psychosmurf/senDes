@@ -287,7 +287,7 @@ int main(){
         while (i < MAX_NUM_USERS) {
             trk = &userData[i];
             while (trk != NULL) {
-                printf("user# %d name is: %s\nuser# %d pass is: %s\nuser# %d email is: %s\n, logged in: %d\n", 
+                printf("user# %d name is: %s\nuser# %d pass is: %s\nuser# %d email is: %s\nlogged in: %d\n", 
                     i, trk -> userName, 
                     i, trk -> userPass,
                     i, trk -> userEmail,
