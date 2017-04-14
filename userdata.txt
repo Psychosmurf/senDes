@@ -1,2 +1,3 @@
 0 dummy dummy dummy 1 0
 12 chris password chris@email.com 1 0
+80 dean password dean@email.com 1 0

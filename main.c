@@ -94,7 +94,6 @@ void registerUsersFromFile(FILE* dataFile, UserData** userData) {
     char* userName = (char*) malloc(sizeof(char)*MAX_NAME_SIZE);
     char* userPass = (char*) malloc(sizeof(char)*MAX_PASS_SIZE);
     char* userEmail = (char*) malloc(sizeof(char)*MAX_EMAIL_SIZE);
-    bool registered;
 
     while (!feof(dataFile)) {
         fscanf(dataFile, "%i", &userNum);
@@ -146,13 +145,6 @@ void loginUser(UserData** userData){
     char* userName = (char*) malloc(sizeof(char)*MAX_NAME_SIZE);
     char* userPass = (char*) malloc(sizeof(char)*MAX_PASS_SIZE);
     char* userEmail = (char*) malloc(sizeof(char)*MAX_EMAIL_SIZE);
-   
-    //skip leading whitespace
-    /*
-    char inChar = ' ';
-    while (inChar == ' ') {
-        inChar = getchar();
-    }*/
 
     scanf("%s", userName);
     printf("read username: %s\n", userName);
@@ -216,7 +208,6 @@ void logoutUser(UserData** userData){
     char* userEmail = (char*) malloc(sizeof(char)*MAX_EMAIL_SIZE);
     bool registered;
     bool loggedIn;
-   
     
     scanf("%s", userName);
     if (sizeof(userName)/(sizeof(char)) > MAX_NAME_SIZE) {
@@ -285,10 +276,26 @@ int main(){
     char inChar;
     while (1) {
         inChar = getchar();
-        if (inChar == '\n') break;
+        if (inChar == '\n') continue;
         if (inChar == 'r') registerUser(&userData);
         if (inChar == 'l') loginUser(&userData);
         if (inChar == 'o') logoutUser(&userData);
+        if (inChar == 'e') break;
+        //test output
+        int i = 0;
+        UserData* trk = NULL;
+        while (i < MAX_NUM_USERS) {
+            trk = &userData[i];
+            while (trk != NULL) {
+                printf("user# %d name is: %s\nuser# %d pass is: %s\nuser# %d email is: %s\n, logged in: %d\n", 
+                    i, trk -> userName, 
+                    i, trk -> userPass,
+                    i, trk -> userEmail,
+                       trk -> loggedIn);
+                trk = trk -> nextUser;
+            }
+        i++;
+        }        
     }
 
     //test output
