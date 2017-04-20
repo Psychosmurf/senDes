@@ -1,0 +1,16 @@
+appdirs==1.4.3
+Brlapi==0.6.5
+Cython==0.25.2
+dj-database-url==0.4.2
+Django==1.11
+gunicorn==19.7.1
+packaging==16.8
+pyparsing==2.2.0
+python-libtorrent==1.1.1
+pytz==2017.2
+pyxdg==0.25
+ranger==1.8.1
+six==1.10.0
+team==1.0
+whitenoise==3.3.0
+psycopg2==2.6.2
