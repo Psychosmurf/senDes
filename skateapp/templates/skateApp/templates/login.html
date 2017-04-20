@@ -1,0 +1,29 @@
+<html>
+    <body>
+
+        <form name = "form" action = "{% url "login" %}"
+            method = "POST" >{% csrf_token %}
+
+            <center>
+                    <input type = "text" 
+                        placeholder = "user name" name = "username" />
+            <br>
+            <br>
+                    <input type = "password"
+                        placeholder = "password" name = "password" />
+            <br>
+            <br>
+                    <input type = "email"
+                        placeholder = "email" name = "email" />
+            <br>
+            <br>
+                    <button style = "border:0px; background-color:#4285F4;" type = "submit"
+                        value = "Login" >
+                        <strong>Login</strong>
+                    </button>
+                
+            </center>
+        </form>
+
+    </body>
+</html>
